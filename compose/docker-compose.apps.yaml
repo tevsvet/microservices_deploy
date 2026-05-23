@@ -21,14 +21,11 @@ services:
 
   flow-manager:
     image: ${FLOW_MANAGER_IMAGE}
-    container_name: flow-manager
-    ports:
-      - "${FLOW_MANAGER_PORT}:8080"
     depends_on:
       postgres-flow-manager:
         condition: service_healthy
     environment:
-      SERVER_PORT: ${FLOW_MANAGER_PORT}
+      SERVER_PORT: 0
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-flow-manager:5432/${FLOW_MANAGER_POSTGRES_DB}
       SPRING_DATASOURCE_USERNAME: ${FLOW_MANAGER_POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${FLOW_MANAGER_POSTGRES_PASSWORD}
@@ -68,14 +65,11 @@ services:
 
   file-conversion-service:
     image: ${FILE_CONVERSION_IMAGE}
-    container_name: file-conversion-service
-    ports:
-      - "${FILE_CONVERSION_PORT}:8081"
     depends_on:
       postgres-file-conversion:
         condition: service_healthy
     environment:
-      SERVER_PORT: ${FILE_CONVERSION_PORT}
+      SERVER_PORT: 0
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-file-conversion:5432/${FILE_CONVERSION_POSTGRES_DB}
       SPRING_DATASOURCE_USERNAME: ${FILE_CONVERSION_POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${FILE_CONVERSION_POSTGRES_PASSWORD}
@@ -94,6 +88,16 @@ services:
       MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
       MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
       MINIO_BUCKET: ${MINIO_BUCKET}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE}
+    networks:
+      - microservices-net
+
+  api-gateway:
+    image: ${API_GATEWAY_IMAGE}
+    ports:
+      - "${API_GATEWAY_PORT}:8765"
+    environment:
+      SERVER_PORT: 8765
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE}
     networks:
       - microservices-net
