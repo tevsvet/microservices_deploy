@@ -1,0 +1,16 @@
+services:
+
+  eureka-server:
+    image: ${EUREKA_SERVER_IMAGE}
+    container_name: eureka-server
+    ports:
+      - "${EUREKA_PORT}:8761"
+    environment:
+      SERVER_PORT: 8761
+      EUREKA_INSTANCE_HOSTNAME: ${EUREKA_HOST}
+    networks:
+      - microservices-net
+
+networks:
+  microservices-net:
+    name: ${MICROSERVICES_NETWORK}
